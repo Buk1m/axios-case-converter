@@ -24,7 +24,8 @@ const caseFunctions: CaseFunctions = {
 const transformObjectUsingCallbackRecursive = (
   data: unknown,
   fn: CaseFunction,
-  overwrite: ObjectTransformerOptions["overwrite"]
+  overwrite: ObjectTransformerOptions["overwrite"],
+  useToJSON: ObjectTransformerOptions["useToJSON"],
 ): unknown => {
   if (!isTransformable(data)) {
     return data;
@@ -65,6 +66,10 @@ const transformObjectUsingCallbackRecursive = (
     return data;
   }
   /* eslint-enable no-console */
+
+  if(useToJSON && 'toJSON' in data && typeof data.toJSON == "function" ){
+    data = data.toJSON
+  }
 
   const prototype = Object.getPrototypeOf(data);
 
@@ -107,7 +112,7 @@ const transformObjectUsingCallbackRecursive = (
     } else if (key !== "__proto__") {
       store[
         fn(typeof key === "string" ? key : `${key}`)
-      ] = transformObjectUsingCallbackRecursive(value, fn, overwrite);
+      ] = transformObjectUsingCallbackRecursive(value, fn, overwrite, useToJSON);
     }
   }
   return store;
@@ -127,7 +132,8 @@ const transformObjectUsingCallback = (
   return transformObjectUsingCallbackRecursive(
     data,
     fn,
-    options?.overwrite || false
+    options?.overwrite || false,
+    options?.useToJSON || false
   );
 };
 

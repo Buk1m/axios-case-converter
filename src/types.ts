@@ -33,6 +33,7 @@ export type ObjectTransformerOptions = {
   overwrite?: boolean;
   preservedKeys?: string[] | PreservedKeysCondition;
   caseOptions?: NoCaseOptions;
+  useToJSON?: boolean;
 };
 export interface ObjectTransformer {
   (data: unknown, options?: ObjectTransformerOptions): unknown;
